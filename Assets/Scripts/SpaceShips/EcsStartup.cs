@@ -6,6 +6,9 @@ namespace SpaceShips
     sealed class EcsStartup : MonoBehaviour {
         EcsWorld _world;
         EcsSystems _systems;
+        [SerializeField] StaticData _staticData;
+        [SerializeField] SceneData _sceneData;
+        [SerializeField] GameUI _gameUI;
 
         void Start () {
             // void can be switched to IEnumerator for support coroutines.
@@ -17,21 +20,14 @@ namespace SpaceShips
             Leopotam.Ecs.UnityIntegration.EcsSystemsObserver.Create (_systems);
 #endif
             _systems
-                // register your systems here, for example:
-                // .Add (new TestSystem1 ())
-                // .Add (new TestSystem2 ())
-                
-                // register one-frame components (order is important), for example:
-                // .OneFrame<TestComponent1> ()
-                // .OneFrame<TestComponent2> ()
-                
-                // inject service instances here (order doesn't important), for example:
-                // .Inject (new CameraService ())
-                // .Inject (new NavMeshSupport ())
+                .Add(new ShipInitSystem())
+                .Inject(_staticData)
+                .Inject(_sceneData)
+                .Inject(_gameUI)
                 .Init ();
         }
 
-        void Update () {
+        void FixedUpdate () {
             _systems?.Run ();
         }
 

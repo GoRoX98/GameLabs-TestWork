@@ -1,9 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace SpaceShips
 {
+    [CreateAssetMenu(fileName = "Static Data", menuName = "Game/New Static Data")]
     public class StaticData : ScriptableObject
     {
         [SerializeField] private List<ShipSO> _ships;

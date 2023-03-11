@@ -2,11 +2,13 @@ namespace SpaceShips
 {
     struct ModuleComponent 
     {
+        public string ModuleName;
         public ModuleStruct Module;
 
-        public ModuleComponent(ModuleStruct module)
+        public ModuleComponent(ModuleStruct module, string name)
         {
             Module = module;
+            ModuleName = name;
         }
     }
 }

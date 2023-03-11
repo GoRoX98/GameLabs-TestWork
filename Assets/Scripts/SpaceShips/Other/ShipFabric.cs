@@ -1,5 +1,5 @@
 using Leopotam.Ecs;
-using UnityEngine;
+using System.Collections.Generic;
 
 namespace SpaceShips
 {
@@ -9,6 +9,7 @@ namespace SpaceShips
         private StaticData _staticData;
         private SceneData _sceneData;
         private int _shipId;
+        private List<ModuleComponent> _modules;
 
         public ShipFabric(EcsWorld world, StaticData staticData, SceneData sceneData)
         {
@@ -17,27 +18,55 @@ namespace SpaceShips
             _sceneData = sceneData;
         }
 
-        public void CreateShip()
+        public void CreateShip(List<ModuleSO> modules, List<WeaponSO> weapons, ShipSO ship, ShipObject shipObj)
         {
             EcsEntity shipEntity = _world.NewEntity();
             _shipId = shipEntity.GetInternalId();
-            shipEntity.Get<ShipComponent>() = new(_sceneData.ShipsObject[_shipId], _staticData.Ships[_shipId].Ship);
+            shipEntity.Get<ShipComponent>() = new(shipObj, ship.Ship);
 
-            CreateModules();
-            CreateWeapons();
+            
+            CreateModules(modules);
+            CreateWeapons(weapons);
+
+            float[] shipStats = CalculateStats(ship.Ship);
+            shipEntity.Get<ShipInfoComponent>() = new(shipStats[0], shipStats[1], shipStats[2]);
         }
 
-        private void CreateWeapons()
+        private float[] CalculateStats(ShipStruct ship)
         {
-            EcsEntity weaponEntity = _world.NewEntity();
-            weaponEntity.Get<OwnerComponent>() = new(_shipId);
+            float health = ship.Health;
+            float shield = ship.Shield;
+            float regeneration = ship.ShieldRegeneration;
 
+            foreach(var module in _modules)
+            {
+                health += module.Module.Health;
+                shield += module.Module.Shield;
+                regeneration *= 1 + module.Module.ShieldRegenerationModificator;
+            }
+
+            return new float[] {health, shield, regeneration};
         }
 
-        private void CreateModules()
+        private void CreateWeapons(List<WeaponSO> weapons)
         {
-            EcsEntity moduleEntity = _world.NewEntity();
-            moduleEntity.Get<OwnerComponent>() = new(_shipId);
+            foreach (var weapon in weapons)
+            {
+                EcsEntity weaponEntity = _world.NewEntity();
+                weaponEntity.Get<OwnerComponent>() = new(_shipId);
+                weaponEntity.Get<WeaponComponent>() = new(weapon.Weapon, weapon.name);
+            }
+        }
+
+        private void CreateModules(List<ModuleSO> modules)
+        {
+            _modules = new List<ModuleComponent>();
+            foreach (var module in modules)
+            {
+                EcsEntity moduleEntity = _world.NewEntity();
+                moduleEntity.Get<OwnerComponent>() = new(_shipId);
+                _modules.Add(moduleEntity.Get<ModuleComponent>() = new(module.ShipModule, module.name));
+            }
         }
     }
 }

@@ -7,13 +7,24 @@ namespace SpaceShips
     public class ShipCell : MonoBehaviour
     {
         [SerializeField] private TMP_Dropdown _dropdownUI;
-        [SerializeField] private List<CellElement> _elements;
         private ScriptableObject _seleñtModule;
-        public ScriptableObject SelectModule => _seleñtModule;
+        private List<ScriptableObject> _modules;
 
-        private void Awake()
+        public void Init(List<ScriptableObject> modules)
         {
-            _seleñtModule = _dropdownUI.template.GetChild(1).GetComponent<CellElement>().ShipModule;
+            _dropdownUI = GetComponent<TMP_Dropdown>();
+            _modules = modules;
+
+            List<TMP_Dropdown.OptionData> options = new();
+            _modules.ForEach(action => options.Add(new TMP_Dropdown.OptionData(action.name)));
+            _dropdownUI.ClearOptions();
+            _dropdownUI.AddOptions(options);
+        }
+
+        public ScriptableObject GetSelectElement()
+        {
+            _seleñtModule = _modules[_dropdownUI.value];
+            return _seleñtModule;
         }
     }
 }

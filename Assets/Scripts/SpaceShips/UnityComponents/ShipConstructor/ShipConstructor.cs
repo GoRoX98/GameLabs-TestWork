@@ -1,7 +1,5 @@
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
-using UnityEngine.UI;
-using TMPro;
 using UnityEngine;
 
 namespace SpaceShips
@@ -9,22 +7,58 @@ namespace SpaceShips
     public class ShipConstructor : MonoBehaviour
     {
         [SerializeField] private ShipCell[] _shipCells;
-        [SerializeField] private ScriptableObject _ship;
+        [SerializeField] private ShipSO _ship;
+        [SerializeField] private ShipObject _shipObj;
         [SerializeField] private StaticData _staticData;
-        [SerializeField] private List<ScriptableObject> _selectModules;
-        [SerializeField] private List<ScriptableObject> _selectWeapons;
+        private List<ScriptableObject> _selectModules;
+        private List<ScriptableObject> _selectWeapons;
+
+        public ShipSO Ship => _ship;
+        public ShipObject ShipObj => _shipObj;
+        public List<ScriptableObject> SelectModules => _selectModules;
+        public List<ScriptableObject> SelectWeapons => _selectWeapons;
 
         private void Awake()
         {
             _shipCells = transform.GetComponentsInChildren<ShipCell>();
+            SetElements();
+        }
 
-            foreach(var cell in _shipCells)
+        private void SetElements()
+        {
+            int countM = 0;
+            int countW = 0;
+
+            for (int i = 0; i < _shipCells.Length; i++)
             {
-                if (cell.SelectModule is ModuleSO)
-                    _selectModules.Add(cell.SelectModule);
+                if(countM < _ship.Ship.ModulesCount)
+                {
+                    
+                    _shipCells[i].Init(_staticData.Modules.ToList<ScriptableObject>());
+                    countM += 1;
+                }
                 else
-                    _selectWeapons.Add(cell.SelectModule);
+                {
+                    _shipCells[i].Init(_staticData.Weapons.ToList<ScriptableObject>());
+                    countW += 1;
+                }
             }
         }
+
+        public void ConstructShip()
+        {
+            _selectModules = new List<ScriptableObject>();
+            _selectWeapons = new List<ScriptableObject>();
+
+            foreach (var cell in _shipCells)
+            {
+                if (cell.GetSelectElement() is ModuleSO)
+                    _selectModules.Add(cell.GetSelectElement());
+                else
+                    _selectWeapons.Add(cell.GetSelectElement());
+            }
+        }
+
+
     }
 }

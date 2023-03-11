@@ -9,12 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54f62d4b6686a0941ac18461104e0fce, type: 3}
-  m_Name: Ship
+  m_Script: {fileID: 11500000, guid: 1f312e78dc9c8704e9bf1198df238587, type: 3}
+  m_Name: Ship Module B
   m_EditorClassIdentifier: 
-  _ship:
-    _life: 0
-    _shield: 0
-    _shieldRegeneration: 0
-    _weaponesCount: 0
-    _modulesCount: 0
+  _shipModule:
+    Life: 50
+    Shield: 0
+    ReloadModificator: 0
+    ShieldRegenerationModificator: 0
