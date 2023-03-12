@@ -5,7 +5,6 @@ namespace SpaceShips
     sealed class UISystem : IEcsRunSystem 
     {
         // auto-injected fields.
-        readonly EcsWorld _world = null;
         private GameUI _gameUI;
         private EcsFilter<GameStatusComponent> _status;
         private EcsFilter<ShipInfoComponent> _filterShips;
