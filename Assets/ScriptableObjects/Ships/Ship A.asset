@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Ship A
   m_EditorClassIdentifier: 
   _ship:
-    Life: 100
+    Health: 100
     Shield: 80
     ShieldRegeneration: 1
     WeaponesCount: 2

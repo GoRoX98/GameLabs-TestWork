@@ -7,9 +7,10 @@ namespace SpaceShips
     {
         // auto-injected fields.
         readonly EcsWorld _world = null;
-        private StaticData _staticData;
-        private SceneData _sceneData;
         private GameUI _gameUI;
+        private EcsFilter<ShipInfoComponent> _filterShips;
+        private EcsFilter<ModuleComponent> _filterModules;
+        private EcsFilter<WeaponComponent> _filterWeapons;
         
         public void Init () 
         {
@@ -18,10 +19,21 @@ namespace SpaceShips
 
         private void CreateShip()
         {
-            ShipFabric fabric = new(_world, _staticData, _sceneData);
+            if(!_filterShips.IsEmpty())
+            {
+                foreach (var i in _filterShips)
+                    _filterShips.GetEntity(i).Destroy();
+                foreach (var i in _filterModules)
+                    _filterModules.GetEntity(i).Destroy();
+                foreach (var i in _filterWeapons)
+                    _filterWeapons.GetEntity(i).Destroy();
+            }
+
+            ShipFabric fabric = new(_world);
             foreach(var constructor in _gameUI.Constructors)
             {
-                fabric.CreateShip(constructor.SelectModules.Select(x =>(ModuleSO)x).ToList(), constructor.SelectWeapons.Select(x => (WeaponSO)x).ToList(), 
+                fabric.CreateShip(constructor.SelectModules.Select(x =>(ModuleSO)x).ToList(), 
+                                    constructor.SelectWeapons.Select(x => (WeaponSO)x).ToList(), 
                                     constructor.Ship, constructor.ShipObj);
             }
         }

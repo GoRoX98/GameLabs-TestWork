@@ -21,6 +21,10 @@ namespace SpaceShips
 #endif
             _systems
                 .Add(new ShipInitSystem())
+                .Add(new ShipRunSystem())
+                .Add(new BattleSystem())
+                .Add(new GameStatusSystem())
+                .Add(new UISystem())
                 .Inject(_staticData)
                 .Inject(_sceneData)
                 .Inject(_gameUI)

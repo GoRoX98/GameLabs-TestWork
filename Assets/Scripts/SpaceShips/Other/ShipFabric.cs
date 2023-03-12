@@ -6,16 +6,12 @@ namespace SpaceShips
     public class ShipFabric
     {
         private EcsWorld _world;
-        private StaticData _staticData;
-        private SceneData _sceneData;
         private int _shipId;
         private List<ModuleComponent> _modules;
 
-        public ShipFabric(EcsWorld world, StaticData staticData, SceneData sceneData)
+        public ShipFabric(EcsWorld world)
         {
             _world = world;
-            _staticData = staticData;
-            _sceneData = sceneData;
         }
 
         public void CreateShip(List<ModuleSO> modules, List<WeaponSO> weapons, ShipSO ship, ShipObject shipObj)
@@ -29,7 +25,7 @@ namespace SpaceShips
             CreateWeapons(weapons);
 
             float[] shipStats = CalculateStats(ship.Ship);
-            shipEntity.Get<ShipInfoComponent>() = new(shipStats[0], shipStats[1], shipStats[2]);
+            shipEntity.Get<ShipInfoComponent>() = new(ship.name, shipStats[0], shipStats[1], shipStats[2]);
         }
 
         private float[] CalculateStats(ShipStruct ship)
@@ -55,6 +51,11 @@ namespace SpaceShips
                 EcsEntity weaponEntity = _world.NewEntity();
                 weaponEntity.Get<OwnerComponent>() = new(_shipId);
                 weaponEntity.Get<WeaponComponent>() = new(weapon.Weapon, weapon.name);
+                ref WeaponComponent weaponComponent = ref weaponEntity.Get<WeaponComponent>();
+                foreach(var module in _modules)
+                {
+                    weaponComponent.Weapon.RateOfFire *= 1 + module.Module.ReloadModificator;
+                }
             }
         }
 
