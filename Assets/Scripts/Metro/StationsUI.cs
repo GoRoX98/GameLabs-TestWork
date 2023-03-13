@@ -25,7 +25,12 @@ namespace Metro
                 _startStation.options.Add(new(station.Name));
                 _endStation.options.Add(new(station.Name));
             }
+        }
 
+        private void Start()
+        {
+            _startStation.value = 1;
+            _endStation.value = 1;
             UpdateSelectStations();
         }
 

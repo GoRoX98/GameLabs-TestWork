@@ -15,7 +15,15 @@ namespace Metro
 
         public void Result(Path path)
         {
-            _result.text = $"Кратчайший путь \nПромежуточный станций: {path.Steps - 1} \nПересадок: {path.TransferCount}";
+            string pathString = "";
+            for (int i = 0; i < path.PathStory.Count; i++)
+            {
+                if (i < path.PathStory.Count - 1 && path.PathStory.Count > 1)
+                    pathString += path.PathStory[i].Name + "-->";
+                else
+                    pathString += path.PathStory[i].Name;
+            }
+            _result.text = $"Кратчайший путь \nПромежуточный станций: {path.Steps} \nПересадок: {path.TransferCount} \nПуть: {pathString}";
         }
     }
 }

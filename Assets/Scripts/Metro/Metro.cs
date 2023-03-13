@@ -21,7 +21,12 @@ namespace Metro
             _endPoint = _ui.StationsUI.EndStationSO;
 
             if (_startPoint == _endPoint)
-                _ui.Result(new Path(0, 0));
+            {
+                List<StationSO> pathStory = new();
+                pathStory.Add(_startPoint);
+                _ui.Result(new Path(0, 0, pathStory));
+                return;
+            }
 
             List<LineSO> startLines = new();
             foreach (LineSO line in _lines)
@@ -47,7 +52,6 @@ namespace Metro
 
             while (!findWay)
             {
-                step += 1;
                 List<WayStruct> newWays = new();
 
                 for (int i = 0; i < ways.Count; i++)
@@ -56,21 +60,25 @@ namespace Metro
                         continue;
 
                     ways[i] = NextStation(ways[i]);
+                    ways[i].PathStory.Add(ways[i].CurrentStation);
+
 
                     if(ways[i].CurrentStation == _endPoint)
                     {
                         findWay = true;
-                        path = new(step, ways[i].TransferCount);
+                        path = new(step, ways[i].TransferCount, ways[i].PathStory);
                         break;
                     }
 
                     if (ways[i].WayEnd)
                         continue;
 
-                    List<LineSO> newLines = CheckTransfer(ways[i]);
+                    List<LineSO> newLines = FindTransfer(ways[i]);
                     if (newLines != null)
-                        CreateNewWays(newLines, ways[i].CurrentStation, ways[i].TransferCount + 1, ref newWays);
+                        CreateNewWays(newLines, ways[i].CurrentStation, ways[i].TransferCount + 1, ref newWays, ways[i]);
                 }
+
+                step += 1;
 
                 if (newWays != null)
                     ways.AddRange(newWays);
@@ -79,17 +87,17 @@ namespace Metro
             return path;
         }
 
-        private void CreateNewWays(List<LineSO> lines, StationSO station, int transfer, ref List<WayStruct> ways)
+        private void CreateNewWays(List<LineSO> lines, StationSO station, int transfer, ref List<WayStruct> ways, WayStruct way = new())
         {
             foreach (var line in lines)
             {
-                ways.Add(new WayStruct(line, station, transfer));
+                ways.Add(new WayStruct(line, station, transfer, way.PathStory));
                 if (line.RingLine || line.Stations.IndexOf(station) > 0)
-                    ways.Add(new WayStruct(line, station, transfer, true));
+                    ways.Add(new WayStruct(line, station, transfer, way.PathStory, true));
             }
         }
 
-        private List<LineSO> CheckTransfer(WayStruct way)
+        private List<LineSO> FindTransfer(WayStruct way)
         {
             List<LineSO> newLines = _lines.FindAll(match => match.Stations.Find(match => match == way.CurrentStation) && match != way.Line);
             return newLines;
@@ -124,6 +132,5 @@ namespace Metro
             return way;
         }
 
-         
     }
 }
