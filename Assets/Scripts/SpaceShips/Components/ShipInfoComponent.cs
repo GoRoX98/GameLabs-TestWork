@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace SpaceShips 
 {
-    struct ShipInfoComponent 
+    public struct ShipInfoComponent 
     {
         public string ShipName;
         public float StartHealth;

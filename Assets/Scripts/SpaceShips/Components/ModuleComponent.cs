@@ -1,6 +1,6 @@
 namespace SpaceShips 
 {
-    struct ModuleComponent 
+    public struct ModuleComponent 
     {
         public string ModuleName;
         public ModuleStruct Module;

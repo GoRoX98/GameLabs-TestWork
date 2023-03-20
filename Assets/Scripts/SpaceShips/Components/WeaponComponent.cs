@@ -1,6 +1,6 @@
 namespace SpaceShips
 {
-    struct WeaponComponent 
+    public struct WeaponComponent 
     {
         public string WeaponName;
         public WeaponStruct Weapon;
